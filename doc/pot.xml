@@ -271,4 +271,10 @@
 </bibliography>
 </refsect1>
 
+<refsect1><title>Copyright</title>
+
+<para><command>pot</command> is copyright of its author, who releases it under version 2.0 of the GNU General Public License.</para>
+
+</refsect1>
+
 </refentry>
