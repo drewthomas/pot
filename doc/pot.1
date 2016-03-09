@@ -1,0 +1,299 @@
+'\" t
+.\"     Title: pot
+.\"    Author: Drew Thomas <dmt107@imperial.ac.uk>
+.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
+.\"      Date: 03/09/2016
+.\"    Manual: User Commands
+.\"    Source: pot
+.\"  Language: English
+.\"
+.TH "POT" "1" "03/09/2016" "pot" "User Commands"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+pot \- run electrostatic, microscopic simulation of a plasma
+.SH "SYNOPSIS"
+.HP \w'\fBpot\fR\ 'u
+\fBpot\fR [\-a\ \fIradius\fR] [\-d\ \fIduration\fR] [\-E\ \fItemperature\fR] [\-e\ \fIduration\fR] [\-f\ \fIpath\fR] [\-g\ \fIpath\fR] [\-I\ \fItemperature\fR] [\-i\ \fIcount\fR] [\-l] [\-L\ \fIlength\fR] [\-m\ \fIlength\fR] [\-N\ \fIparticles\fR] [\-R\ \fIpath\fR] [\-r\ \fIradius\fR] [\-s\ \fIdistance\fR] [\-t\ \fIcount\fR] [\-w\ \fItime\fR] [\-x\ \fIvelocity\fR]
+.SH "DESCRIPTION"
+.PP
+\fBpot\fR
+uses Barnes & Hut\*(Aqs treecode algorithm to run electrostatic, non\-relativistic, microscopic simulations of a spherical dust grain charging in a fully ionized plasma\&. The program runs in parallel using MPI, and can show the particles moving on\-screen using OpenGL\&.
+.PP
+The user may run
+\fBpot\fR
+with various parameters, set either at runtime through command\-line options (detailed below) or at compile\-time with C preprocessor directives\&.
+.PP
+\fBpot\fR
+can be compiled to simulate a spherical or a cubic region of plasma\&. At the simulation\*(Aqs centre is a sphere which collects particles which collide with it\&. (Some particles move so quickly that they pass through the sphere between time steps\&. To detect those collisions
+\fBpot\fR
+interpolates particles\*(Aq trajectories between time steps\&.) Collected ions and electrons increment and decrement the sphere\*(Aqs charge respectively, and are reinjected at the simulation boundary with a new, random velocity\&.
+.SS "Saving and loading the simulation state"
+.PP
+By default
+\fBpot\fR
+begins a new simulation every time it runs, and saves only summary information\&. The user may override this behaviour with the
+\fB\-f\fR
+and
+\fB\-g\fR
+options\&. Given a filename via
+\fB\-f\fR,
+\fBpot\fR
+saves the complete simulation state to that file when the simulation finishes\&. Likewise, given a filename via
+\fB\-g\fR,
+\fBpot\fR
+loads the simulation state from that file and continues that simulation instead of starting anew\&.
+.PP
+Simulation state files include the pseudorandom number generator\*(Aqs state, so one can use this feature to continue a simulation as if it were never interrupted, as long as one holds
+\fBpot\fR\*(Aqs settings constant\&. State files are mostly memory dumps, so they may not be portable across platforms\&.
+.SH "OPTIONS"
+.PP
+\fB\-a\fR \fIradius\fR
+.RS 4
+The radius of the dust grain in metres\&.
+.RE
+.PP
+\fB\-d\fR \fIduration\fR
+.RS 4
+The duration of each time step in seconds\&.
+.RE
+.PP
+\fB\-e\fR \fIduration\fR
+.RS 4
+The simulation\*(Aqs initial settling/equilibration time in seconds\&. (During this starting period the dust grain doesn\*(Aqt collect particles, which instead move through the grain as if it weren\*(Aqt there\&.)
+.RE
+.PP
+\fB\-E\fR \fItemperature\fR
+.RS 4
+The electron (re)injection temperature in Kelvin\&.
+.RE
+.PP
+\fB\-f\fR \fIpath\fR
+.RS 4
+Path to which to write the simulation\*(Aqs final state\&.
+.RE
+.PP
+\fB\-g\fR \fIpath\fR
+.RS 4
+Path from which to load the simulation\*(Aqs initial state\&.
+.RE
+.PP
+\fB\-i\fR \fIcount\fR
+.RS 4
+The number of time steps for which to run the simulation\&. If omitted,
+\fBpot\fR
+tries to run indefinitely unless
+\fB\-w\fR
+sets a runtime limit\&. If both
+\fB\-i\fR
+and
+\fB\-w\fR
+options are used,
+\fBpot\fR
+stops once it uses up the time quota given with
+\fB\-w\fR, even if it hasn\*(Aqt simulated as many time steps as were requested with
+\fB\-i\fR\&.
+.RE
+.PP
+\fB\-I\fR \fItemperature\fR
+.RS 4
+The ion (re)injection temperature in Kelvin\&.
+.RE
+.PP
+\fB\-l\fR
+.RS 4
+Indicate which command\-line settings
+\fBpot\fR
+would use, then exit without running a simulation\&.
+.RE
+.PP
+\fB\-L\fR \fIlength\fR
+.RS 4
+If
+\fBpot\fR\*(Aqs been compiled to use a cubic domain, set the domain\*(Aqs side length in pixels\&.
+.RE
+.PP
+\fB\-m\fR \fIlength\fR
+.RS 4
+The side length of a pixel in metres\&.
+.RE
+.PP
+\fB\-N\fR \fIparticles\fR
+.RS 4
+The number of particles to simulate\&. The first particle is always the dust grain; subsequent particles are either electrons or ions\&.
+\fBpot\fR
+uses equal numbers of electrons and ions when possible (i\&.e\&. when
+\fIparticles\fR
+is odd)\&.
+.RE
+.PP
+\fB\-R\fR \fIpath\fR
+.RS 4
+Read a simulation state from
+\fIpath\fR
+and write the position and velocity of every particle to standard output, before exiting\&.
+.RE
+.PP
+\fB\-r\fR \fIradius\fR
+.RS 4
+If
+\fBpot\fR\*(Aqs been compiled to use a spherical domain, set the domain\*(Aqs radius in pixels\&.
+.RE
+.PP
+\fB\-s\fR \fIdistance\fR
+.RS 4
+The softening distance (in metres) used when computing interparticle forces\&. (If there are repeated spikes in the electron and/or ion temperatures, this distance is probably too small for the given time step duration\&.)
+.RE
+.PP
+\fB\-t\fR \fIcount\fR
+.RS 4
+The number of particle trajectories to draw as curves on\-screen (if
+\fBpot\fR\*(Aqs been compiled to graphically display the simulation)\&.
+.RE
+.PP
+\fB\-w\fR \fItime\fR
+.RS 4
+Set a limit (in minutes) on the wall\-time
+\fBpot\fR
+spends on simulating\&. This is a soft limit;
+\fBpot\fR
+stops only once at least this much time has elapsed, and not during a time step\&.
+\fBpot\fR
+may finish without using all of this time quota if the
+\fB\-i\fR
+option is used\&.
+.RE
+.PP
+\fB\-x\fR \fIvelocity\fR
+.RS 4
+The plasma flows in the
+\fIx\fR\-direction at a speed of
+\fIvelocity\fR
+metres per second\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&pot may run without arguments\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ \&./pot
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+When run without arguments,
+\fBpot\fR
+simply runs a simulation indefinitely using its default settings\&. As this is probably not what the user wants,
+\fBpot\fR
+explicitly warns, "Run without arguments; attempting to use default settings\&."
+.PP
+\fBExample\ \&2.\ \&running pot with more realistic arguments\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ mpiexec \-np 8 \&./pot \-f output/state \-g output/state \-i 1000000 \-w 1440
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This command runs
+\fBpot\fR
+across 8 processes using MPI\&.
+\fBpot\fR
+loads the simulation\*(Aqs initial state from the file
+output/state; simulates a plasma for one million time steps or 24 hours, whichever comes first; and overwrites
+output/state
+with the final state\&.
+.PP
+\fBExample\ \&3.\ \&a lightweight pot run\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ mpiexec \-np 2 \&./pot \-N 1001
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+A small\-scale
+\fBpot\fR
+run, better suited to a typical PC\&. The number of particles is too low for physically realistic results, but (if the graphical display is turned on) the particles can be seen moving in real time\&.
+.SH "BIBLIOGRAPHY"
+Josh Barnes and Piet Hut. 1986. A hierarchical O(\fIN\fR log \fIN\fR) force-calculation algorithm. Nature. 324. 6096. 446-449. 
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+  
+.fi
+.if n \{\
+.RE
+.\}
+Ian G\&. Gatland. 1994. Numeric integration of Newton's equations including velocity-dependent forces. American Journal of Physics. 62. 3. 259-265. 
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+  
+.fi
+.if n \{\
+.RE
+.\}
+I\&. H\&. Hutchinson. 2003. Ion collection by a sphere in a flowing plasma: 2. non-zero Debye length. Plasma Physics and Controlled Fusion. 45. 8. 1477-1500. 
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+  
+.fi
+.if n \{\
+.RE
+.\}
+William C\&. Swope, Hans C\&. Andersen, Peter H\&. Berens, and Kent R\&. Wilson. 1982. A computer simulation method for the calculation of equilibrium constants for the formation of physical clusters of molecules: Application to small water clusters. The Journal of Chemical Physics. 76. 1. 637-649. 
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+  
+.fi
+.if n \{\
+.RE
+.\}
+.SH "AUTHOR"
+.PP
+\fBDrew Thomas\fR <\&dmt107@imperial\&.ac\&.uk\&>
+.br
+Imperial College London
+.RS 4
+Wrote \fBpot\fR and this documentation\&.
+.RE

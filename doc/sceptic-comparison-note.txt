@@ -1,0 +1,20 @@
+When comparing pot's SCEPTICesque reinjection algorithm to SCEPTIC's own
+output, some basic SCEPTIC settings that work for making a fair comparison
+are
+	./sceptic -nr100 -nt100 -l99 -ni1000000 -p0 --bcphi0 -v0 2> reinj.dat
+which gets SCEPTIC to simulate a million ions without drift, with the central
+sphere/grain fixed to zero potential, and a very long Debye length so that
+that central zero potential extends to the edge. Also, by default, SCEPTIC's
+ion velocity components are sqrt(2) bigger than pot's, so allow for that.
+
+When simulating with drift, one has to convince SCEPTIC to use the same
+temperature scale as pot, by adding the -t0.5 flag (i.e. T_e / T_i = 0.5):
+	./sceptic -nr100 -nt100 -l99 -ni1000000 -p0 --bcphi0 -t0.5 -v2
+which in this case has SCEPTIC using a drift velocity of twice the ion
+thermal velocity. Tests like this indicate that pot successfully mimics
+SCEPTIC's reinjection procedure with drift (but negligible edge potential).
+
+Final command line I used when comparing my reinjection code against
+SCEPTIC's output:
+	./sceptic -s300 -x9 -nr99 -nt99 -l4 -ni3600000 -p0 --bcphi0 -t0.5 -v1 \
+		2> reinj-sample.dat

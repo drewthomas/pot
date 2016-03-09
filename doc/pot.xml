@@ -1,0 +1,274 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="pot">
+
+<info>
+	<author>
+		<personname>
+			<firstname>Drew</firstname>
+			<surname>Thomas</surname>
+		</personname>
+		<address><email>dmt107@imperial.ac.uk</email></address>
+		<affiliation>
+			<orgname>Imperial College London</orgname>
+		</affiliation>
+		<contrib>Wrote <command>pot</command> and
+		         this documentation.</contrib>
+	</author>
+</info>
+
+<refmeta>
+	<refentrytitle>pot</refentrytitle>
+	<manvolnum>1</manvolnum>
+	<refmiscinfo class="source">pot</refmiscinfo>
+	<refmiscinfo class="manual">User Commands</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>pot</refname>
+<refpurpose>run electrostatic, microscopic simulation of a plasma</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>pot</command>
+<arg choice="opt">-a <replaceable>radius</replaceable></arg>
+<arg choice="opt">-d <replaceable>duration</replaceable></arg>
+<arg choice="opt">-E <replaceable>temperature</replaceable></arg>
+<arg choice="opt">-e <replaceable>duration</replaceable></arg>
+<arg choice="opt">-f <replaceable>path</replaceable></arg>
+<arg choice="opt">-g <replaceable>path</replaceable></arg>
+<arg choice="opt">-I <replaceable>temperature</replaceable></arg>
+<arg choice="opt">-i <replaceable>count</replaceable></arg>
+<arg choice="opt">-l</arg>
+<arg choice="opt">-L <replaceable>length</replaceable></arg>
+<arg choice="opt">-m <replaceable>length</replaceable></arg>
+<arg choice="opt">-N <replaceable>particles</replaceable></arg>
+<arg choice="opt">-R <replaceable>path</replaceable></arg>
+<arg choice="opt">-r <replaceable>radius</replaceable></arg>
+<arg choice="opt">-s <replaceable>distance</replaceable></arg>
+<arg choice="opt">-t <replaceable>count</replaceable></arg>
+<arg choice="opt">-w <replaceable>time</replaceable></arg>
+<arg choice="opt">-x <replaceable>velocity</replaceable></arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+
+<para><command>pot</command> uses Barnes &amp; Hut's treecode algorithm to run electrostatic, non-relativistic, microscopic simulations of a spherical dust grain charging in a fully ionized plasma. The program runs in parallel using MPI, and can show the particles moving on-screen using OpenGL.</para>
+
+<para>The user may run <command>pot</command> with various parameters, set either at runtime through command-line options (detailed below) or at compile-time with C preprocessor directives.</para>
+
+<para><command>pot</command> can be compiled to simulate a spherical or a cubic region of plasma. At the simulation's centre is a sphere which collects particles which collide with it. (Some particles move so quickly that they pass through the sphere between time steps. To detect those collisions <command>pot</command> interpolates particles' trajectories between time steps.) Collected ions and electrons increment and decrement the sphere's charge respectively, and are reinjected at the simulation boundary with a new, random velocity.</para>
+
+<refsect2><title>Saving and loading the simulation state</title></refsect2>
+
+<para>By default <command>pot</command> begins a new simulation every time it runs, and saves only summary information. The user may override this behaviour with the <option>-f</option> and <option>-g</option> options. Given a filename via <option>-f</option>, <command>pot</command> saves the complete simulation state to that file when the simulation finishes. Likewise, given a filename via <option>-g</option>, <command>pot</command> loads the simulation state from that file and continues that simulation instead of starting anew.</para>
+
+<para>Simulation state files include the pseudorandom number generator's state, so one can use this feature to continue a simulation as if it were never interrupted, as long as one holds <command>pot</command>'s settings constant. State files are mostly memory dumps, so they may not be portable across platforms.</para>
+
+</refsect1>
+
+<refsect1><title>Options</title>
+
+<variablelist>
+
+<varlistentry>
+<term><option>-a</option> <replaceable>radius</replaceable></term>
+<listitem>
+<para>The radius of the dust grain in metres.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-d</option> <replaceable>duration</replaceable></term>
+<listitem>
+<para>The duration of each time step in seconds.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-e</option> <replaceable>duration</replaceable></term>
+<listitem>
+<para>The simulation's initial settling/equilibration time in seconds. (During this starting period the dust grain doesn't collect particles, which instead move through the grain as if it weren't there.)</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-E</option> <replaceable>temperature</replaceable></term>
+<listitem>
+<para>The electron (re)injection temperature in Kelvin.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-f</option> <replaceable>path</replaceable></term>
+<listitem>
+<para>Path to which to write the simulation's final state.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-g</option> <replaceable>path</replaceable></term>
+<listitem>
+<para>Path from which to load the simulation's initial state.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-i</option> <replaceable>count</replaceable></term>
+<listitem>
+<para>The number of time steps for which to run the simulation. If omitted, <command>pot</command> tries to run indefinitely unless <option>-w</option> sets a runtime limit. If both <option>-i</option> and <option>-w</option> options are used, <command>pot</command> stops once it uses up the time quota given with <option>-w</option>, even if it hasn't simulated as many time steps as were requested with <option>-i</option>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-I</option> <replaceable>temperature</replaceable></term>
+<listitem>
+<para>The ion (re)injection temperature in Kelvin.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-l</option></term>
+<listitem>
+<para>Indicate which command-line settings <command>pot</command> would use, then exit without running a simulation.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-L</option> <replaceable>length</replaceable></term>
+<listitem>
+<para>If <command>pot</command>'s been compiled to use a cubic domain, set the domain's side length in pixels.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-m</option> <replaceable>length</replaceable></term>
+<listitem>
+<para>The side length of a pixel in metres.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-N</option> <replaceable>particles</replaceable></term>
+<listitem>
+<para>The number of particles to simulate. The first particle is always the dust grain; subsequent particles are either electrons or ions. <command>pot</command> uses equal numbers of electrons and ions when possible (i.e. when <replaceable>particles</replaceable> is odd).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-R</option> <replaceable>path</replaceable></term>
+<listitem>
+<para>Read a simulation state from <replaceable>path</replaceable> and write the position and velocity of every particle to standard output, before exiting.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-r</option> <replaceable>radius</replaceable></term>
+<listitem>
+<para>If <command>pot</command>'s been compiled to use a spherical domain, set the domain's radius in pixels.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-s</option> <replaceable>distance</replaceable></term>
+<listitem>
+<para>The softening distance (in metres) used when computing interparticle forces. (If there are repeated spikes in the electron and/or ion temperatures, this distance is probably too small for the given time step duration.)</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-t</option> <replaceable>count</replaceable></term>
+<listitem>
+<para>The number of particle trajectories to draw as curves on-screen (if <command>pot</command>'s been compiled to graphically display the simulation).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-w</option> <replaceable>time</replaceable></term>
+<listitem>
+<para>Set a limit (in minutes) on the wall-time <command>pot</command> spends on simulating. This is a soft limit; <command>pot</command> stops only once at least this much time has elapsed, and not during a time step. <command>pot</command> may finish without using all of this time quota if the <option>-i</option> option is used.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-x</option> <replaceable>velocity</replaceable></term>
+<listitem>
+<para>The plasma flows in the <varname>x</varname>-direction at a speed of <replaceable>velocity</replaceable> metres per second.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</refsect1>
+
+<refsect1><title>Examples</title>
+<example><title><command>pot</command> may run without arguments</title>
+<programlisting><prompt>$</prompt> ./pot</programlisting>
+<para>When run without arguments, <command>pot</command> simply runs a simulation indefinitely using its default settings. As this is probably not what the user wants, <command>pot</command> explicitly warns, "<computeroutput>Run without arguments; attempting to use default settings.</computeroutput>"</para>
+</example>
+<example><title>running pot with more realistic arguments</title>
+<programlisting><prompt>$</prompt> mpiexec -np 8 ./pot -f output/state -g output/state -i 1000000 -w 1440</programlisting>
+<para>This command runs <command>pot</command> across 8 processes using MPI. <command>pot</command> loads the simulation's initial state from the file <filename>output/state</filename>; simulates a plasma for one million time steps or 24 hours, whichever comes first; and overwrites <filename>output/state</filename> with the final state.</para>
+</example>
+<example><title>a lightweight <command>pot</command> run</title>
+<programlisting><prompt>$</prompt> mpiexec -np 2 ./pot -N 1001</programlisting>
+<para>A small-scale <command>pot</command> run, better suited to a typical PC. The number of particles is too low for physically realistic results, but (if the graphical display is turned on) the particles can be seen moving in real time.</para>
+</example>
+</refsect1>
+
+<refsect1>
+<title>Bibliography</title>
+<bibliography>
+<title></title>
+<biblioentry>
+	<authorgroup>
+		<author><firstname>Josh</firstname> <surname>Barnes</surname></author>
+		<author><firstname>Piet</firstname> <surname>Hut</surname></author>
+	</authorgroup>
+	<pubdate>1986</pubdate>
+	<title role="article">A hierarchical O(<varname>N</varname> log <varname>N</varname>) force-calculation algorithm</title>
+	<citetitle pubwork="journal">Nature</citetitle>
+	<volumenum>324</volumenum> <issuenum>6096</issuenum>
+	<artpagenums>446-449</artpagenums>
+	<literallayout> <!-- force newline in man page output --> </literallayout>
+</biblioentry>
+<biblioentry>
+	<author><firstname>Ian</firstname> <othername role="mi">G.</othername> <surname>Gatland</surname></author>
+	<pubdate>1994</pubdate>
+	<title role="article">Numeric integration of Newton's equations including velocity-dependent forces</title>
+	<citetitle pubwork="journal">American Journal of Physics</citetitle>
+	<volumenum>62</volumenum> <issuenum>3</issuenum>
+	<artpagenums>259-265</artpagenums>
+	<literallayout> <!-- force newline in man page output --> </literallayout>
+</biblioentry>
+<biblioentry>
+	<author><firstname>I.</firstname> <othername role="mi">H.</othername> <surname>Hutchinson</surname></author>
+	<pubdate>2003</pubdate>
+	<title role="article">Ion collection by a sphere in a flowing plasma: 2. non-zero Debye length</title>
+	<citetitle pubwork="journal">Plasma Physics and Controlled Fusion</citetitle>
+	<volumenum>45</volumenum> <issuenum>8</issuenum>
+	<artpagenums>1477-1500</artpagenums>
+	<literallayout> <!-- force newline in man page output --> </literallayout>
+</biblioentry>
+<biblioentry>
+	<!-- The relevance of this Swope et al. paper is that its appendix
+	     clearly defines the velocity Verlet algorithm. -->
+	<authorgroup>
+		<author><firstname>William</firstname> <othername role="mi">C.</othername> <surname>Swope</surname></author>
+		<author><firstname>Hans</firstname> <othername role="mi">C.</othername> <surname>Andersen</surname></author>
+		<author><firstname>Peter</firstname> <othername role="mi">H.</othername> <surname>Berens</surname></author>
+		<author><firstname>Kent</firstname> <othername role="mi">R.</othername> <surname>Wilson</surname></author>
+	</authorgroup>
+	<pubdate>1982</pubdate>
+	<title role="article">A computer simulation method for the calculation of equilibrium constants for the formation of physical clusters of molecules: Application to small water clusters</title>
+	<citetitle pubwork="journal">The Journal of Chemical Physics</citetitle>
+	<volumenum>76</volumenum> <issuenum>1</issuenum>
+	<artpagenums>637-649</artpagenums>
+	<literallayout> <!-- force newline in man page output --> </literallayout>
+</biblioentry>
+</bibliography>
+</refsect1>
+
+</refentry>
