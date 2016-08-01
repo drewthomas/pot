@@ -2,12 +2,12 @@
 .\"     Title: pot
 .\"    Author: Drew Thomas <dmt107@imperial.ac.uk>
 .\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
-.\"      Date: 03/09/2016
+.\"      Date: 08/01/2016
 .\"    Manual: User Commands
 .\"    Source: pot
 .\"  Language: English
 .\"
-.TH "POT" "1" "03/09/2016" "pot" "User Commands"
+.TH "POT" "1" "08/01/2016" "pot" "User Commands"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -35,16 +35,16 @@ pot \- run electrostatic, microscopic simulation of a plasma
 .SH "DESCRIPTION"
 .PP
 \fBpot\fR
-uses Barnes & Hut\*(Aqs treecode algorithm to run electrostatic, non\-relativistic, microscopic simulations of a spherical dust grain charging in a fully ionized plasma\&. The program runs in parallel using MPI, and can show the particles moving on\-screen using OpenGL\&.
+uses Barnes & Hut\*(Aqs treecode algorithm to run electrostatic, non\-relativistic, microscopic simulations of a spheroidal dust grain charging in a fully ionized plasma\&. The program runs in parallel using MPI, and can show the particles moving on\-screen using OpenGL\&.
 .PP
 The user may run
 \fBpot\fR
 with various parameters, set either at runtime through command\-line options (detailed below) or at compile\-time with C preprocessor directives\&.
 .PP
 \fBpot\fR
-can be compiled to simulate a spherical or a cubic region of plasma\&. At the simulation\*(Aqs centre is a sphere which collects particles which collide with it\&. (Some particles move so quickly that they pass through the sphere between time steps\&. To detect those collisions
+can be compiled to simulate a spherical or a cubic region of plasma\&. At the simulation\*(Aqs centre is a spheroid which collects particles which collide with it\&. (Some particles move so quickly that they pass through the spheroid between time steps\&. To detect those collisions
 \fBpot\fR
-interpolates particles\*(Aq trajectories between time steps\&.) Collected ions and electrons increment and decrement the sphere\*(Aqs charge respectively, and are reinjected at the simulation boundary with a new, random velocity\&.
+interpolates particles\*(Aq trajectories between time steps\&.) Collected ions and electrons increment and decrement the spheroid\*(Aqs charge respectively, and are reinjected at the simulation boundary with a new, random velocity\&.
 .SS "Saving and loading the simulation state"
 .PP
 By default
@@ -65,6 +65,13 @@ Simulation state files include the pseudorandom number generator\*(Aqs state, so
 \fBpot\fR\*(Aqs settings constant\&. State files are mostly memory dumps, so they may not be portable across platforms\&.
 .SH "OPTIONS"
 .PP
+\fB\-A\fR \fIratio\fR
+.RS 4
+In recent
+\fBpot\fR
+versions which support a spheroidal dust grain, set the grain\*(Aqs aspect ratio\&.
+.RE
+.PP
 \fB\-a\fR \fIradius\fR
 .RS 4
 The radius of the dust grain in metres\&.
@@ -75,14 +82,14 @@ The radius of the dust grain in metres\&.
 The duration of each time step in seconds\&.
 .RE
 .PP
-\fB\-e\fR \fIduration\fR
-.RS 4
-The simulation\*(Aqs initial settling/equilibration time in seconds\&. (During this starting period the dust grain doesn\*(Aqt collect particles, which instead move through the grain as if it weren\*(Aqt there\&.)
-.RE
-.PP
 \fB\-E\fR \fItemperature\fR
 .RS 4
 The electron (re)injection temperature in Kelvin\&.
+.RE
+.PP
+\fB\-e\fR \fIduration\fR
+.RS 4
+The simulation\*(Aqs initial settling/equilibration time in seconds\&. (During this starting period the dust grain doesn\*(Aqt collect particles, which instead move through the grain as if it weren\*(Aqt there\&.)
 .RE
 .PP
 \fB\-f\fR \fIpath\fR
@@ -93,6 +100,11 @@ Path to which to write the simulation\*(Aqs final state\&.
 \fB\-g\fR \fIpath\fR
 .RS 4
 Path from which to load the simulation\*(Aqs initial state\&.
+.RE
+.PP
+\fB\-I\fR \fItemperature\fR
+.RS 4
+The ion (re)injection temperature in Kelvin\&.
 .RE
 .PP
 \fB\-i\fR \fIcount\fR
@@ -112,9 +124,10 @@ stops once it uses up the time quota given with
 \fB\-i\fR\&.
 .RE
 .PP
-\fB\-I\fR \fItemperature\fR
+\fB\-L\fR \fIlength\fR
 .RS 4
-The ion (re)injection temperature in Kelvin\&.
+If
+\fBpot\fR\*(Aqs been compiled to use a cubic domain, set the domain\*(Aqs side length in pixels\&.
 .RE
 .PP
 \fB\-l\fR
@@ -122,12 +135,6 @@ The ion (re)injection temperature in Kelvin\&.
 Indicate which command\-line settings
 \fBpot\fR
 would use, then exit without running a simulation\&.
-.RE
-.PP
-\fB\-L\fR \fIlength\fR
-.RS 4
-If
-\fBpot\fR\*(Aqs been compiled to use a cubic domain, set the domain\*(Aqs side length in pixels\&.
 .RE
 .PP
 \fB\-m\fR \fIlength\fR
@@ -289,15 +296,50 @@ William C\&. Swope, Hans C\&. Andersen, Peter H\&. Berens, and Kent R\&. Wilson.
 .if n \{\
 .RE
 .\}
+Drew M\&. Thomas. 2016. Theory and simulation of the charging of dust in plasmas. PhD dissertation. Imperial College London. 
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+  
+.fi
+.if n \{\
+.RE
+.\}
+D\&. M\&. Thomas and J\&. T\&. Holgate. 2016. A treecode to simulate dust-plasma interactions. \m[blue]\fBarXiv preprint 1605\&.06173\fR\m[]\&\s-2\u[1]\d\s+2. 
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+  
+.fi
+.if n \{\
+.RE
+.\}
 .SH "COPYRIGHT"
 .PP
 \fBpot\fR
-is copyright of its author, who releases it under version 2\&.0 of the GNU General Public License\&.
-.SH "AUTHOR"
+is copyright of its authors, who release it under version 2\&.0 of the GNU General Public License\&.
+.SH "AUTHORS"
 .PP
 \fBDrew Thomas\fR <\&dmt107@imperial\&.ac\&.uk\&>
 .br
 Imperial College London
 .RS 4
-Wrote \fBpot\fR and this documentation\&.
+Wrote the original spherical\-grain \fBpot\fR and this documentation\&.
+.RE
+.PP
+\fBJoshua Holgate\fR <\&j\&.holgate14@imperial\&.ac\&.uk\&>
+.br
+Imperial College London
+.RS 4
+Wrote spheroidal\-grain code for \fBpot\fR\&.
+.RE
+.SH "NOTES"
+.IP " 1." 4
+arXiv preprint 1605.06173
+.RS 4
+\%https://arxiv.org/abs/1605.06173
 .RE
