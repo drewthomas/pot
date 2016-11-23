@@ -1,0 +1,22 @@
+# B = magnetic field strength (T)
+# BETAI = normalized magnetic field strength
+# ETAMED = median eta
+# OMLFIT = estimated eta from fitting an OML curve
+B	BETAI	ETAMED	OMLFIT
+# next 3 lines are from older CX1 pot runs
+0	0	-2.633	-2.603
+0.5	0.071	-2.589	-2.555
+20	2.836	-3.364	-3.443
+# The remaining data points from more recent 2014-2015 CX1 pot runs.
+0.176304	0.025	-2.626	-2.637
+0.528911	0.075	-2.655	-2.614
+2.82086	0.4	-2.708	-2.597
+1.41043	0.2	-2.704	-2.648
+0.705215	0.1	-2.569	-2.540
+2.11565	0.3	-2.530	-2.557
+1.76304	0.25	-2.588	-2.573
+0.352608	0.05	-2.649	-2.651
+14.1043	2	-3.383	-3.209	# cutoff for taking median was 1e-5, not 5e-6
+10.5782	1.5	-3.142	-3.230
+7.05215	1	-2.937	-2.923
+5	0.709	-2.808	-2.787
