@@ -1,0 +1,14 @@
+## mean and standard deviation of equilibrium charge data from pot, hydrogenic plasma, Te = Ti = 1eV
+## non-spherical particles: oblate spheroids given by aspect ratios A < 1; prolate spheroids by A > 1 
+
+A	MEAN		STDDEV
+0.01	2.694400186	0.0117988809
+0.0316	2.641305947	0.0067208803
+0.1	2.5996537277	0.0063136703
+0.316	2.5716375688	0.0113492531
+1	2.5607365597	0.0038938335
+3.16	2.5662678406	0.0056300252
+10	2.6352542072	0.007828595
+31.6	2.7110310468	0.0045354926
+100	2.9340245251	0.0028292026
+
